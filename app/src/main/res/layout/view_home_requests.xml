@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
+    android:weightSum="9"
+    android:gravity="center"
+    android:paddingVertical="5dp"
+    android:paddingHorizontal="10dp"
+    android:orientation="horizontal">
+
+    <TextView
+        android:textSize="21sp"
+        android:visibility="gone"
+        android:id="@+id/view_fragment_home_request_text_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1." />
+
+    <TextView
+        android:textSize="21sp"
+
+        android:layout_weight="1"
+        android:id="@+id/view_fragment_home_request_text_sr_no"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1." />
+    <View
+        android:layout_width="1dp"
+        android:layout_height="30dp"
+        android:background="?android:attr/fillColor"/>
+
+    <TextView
+        android:textAlignment="center"
+        android:textSize="18sp"
+        android:layout_weight="2"
+        android:id="@+id/view_fragment_home_request_text_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Approved" />
+    <View
+        android:layout_width="1dp"
+        android:layout_height="30dp"
+        android:background="?android:attr/fillColor"/>
+
+       <LinearLayout
+           android:layout_marginLeft="10dp"
+           android:layout_weight="5"
+           android:text="Reason...."
+           android:orientation="vertical"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content">
+           <TextView
+               android:textSize="18sp"
+
+               android:text="Reason...."
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:id="@+id/view_fragment_home_request_text_reason"/>
+           <TextView
+               android:id="@+id/view_fragment_home_request_text_date"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:text="from dd/mm/yy to  dd/mm/yy"/>
+       </LinearLayout>
+
+
+</LinearLayout>

@@ -1,0 +1,179 @@
+{
+  "project_info": {
+    "project_number": "983520667846",
+    "firebase_url": "https://gpsattendance-7bd66-default-rtdb.firebaseio.com",
+    "project_id": "gpsattendance-7bd66",
+    "storage_bucket": "gpsattendance-7bd66.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:983520667846:android:2c781b27ba660745f18fc7",
+        "android_client_info": {
+          "package_name": "com.projectopel.attendanceautomation"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "983520667846-28fk083ci7dd3ci33g7k7frfqpau19ms.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAOTWaQdYP_hsjErrXH81KMTyPzkoMFTfY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "983520667846-28fk083ci7dd3ci33g7k7frfqpau19ms.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "983520667846-qvt8313v5dbeaf14imk6inpbpqfefk8v.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "example.com.geoAttendanceSystem"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:983520667846:android:d800244fa2261aecf18fc7",
+        "android_client_info": {
+          "package_name": "com.projectopel.automatedattendance"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "983520667846-b3tsg4u3qgqf2l7doplkvhm96jlkl3vo.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.projectopel.automatedattendance",
+            "certificate_hash": "8a451d12771a639536e42d2716747068b16ff2d1"
+          }
+        },
+        {
+          "client_id": "983520667846-28fk083ci7dd3ci33g7k7frfqpau19ms.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAOTWaQdYP_hsjErrXH81KMTyPzkoMFTfY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "983520667846-28fk083ci7dd3ci33g7k7frfqpau19ms.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "983520667846-qvt8313v5dbeaf14imk6inpbpqfefk8v.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "example.com.geoAttendanceSystem"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:983520667846:android:24ec1d4c4e5d9505f18fc7",
+        "android_client_info": {
+          "package_name": "com.su00n.mydetailedlocation"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "983520667846-c3coifakqmghv6ddsgngl3q4ve9n5oqf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.su00n.mydetailedlocation",
+            "certificate_hash": "8a451d12771a639536e42d2716747068b16ff2d1"
+          }
+        },
+        {
+          "client_id": "983520667846-28fk083ci7dd3ci33g7k7frfqpau19ms.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAOTWaQdYP_hsjErrXH81KMTyPzkoMFTfY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "983520667846-28fk083ci7dd3ci33g7k7frfqpau19ms.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "983520667846-qvt8313v5dbeaf14imk6inpbpqfefk8v.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "example.com.geoAttendanceSystem"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:983520667846:android:18770329d32ed5eff18fc7",
+        "android_client_info": {
+          "package_name": "example.com.geo_attendance_system"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "983520667846-2lo9jt3j3o40kv49dg16u5dbqod6ag0a.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "example.com.geo_attendance_system",
+            "certificate_hash": "8a451d12771a639536e42d2716747068b16ff2d1"
+          }
+        },
+        {
+          "client_id": "983520667846-28fk083ci7dd3ci33g7k7frfqpau19ms.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAOTWaQdYP_hsjErrXH81KMTyPzkoMFTfY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "983520667846-28fk083ci7dd3ci33g7k7frfqpau19ms.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "983520667846-qvt8313v5dbeaf14imk6inpbpqfefk8v.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "example.com.geoAttendanceSystem"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
