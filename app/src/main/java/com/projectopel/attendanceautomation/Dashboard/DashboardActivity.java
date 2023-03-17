@@ -3,6 +3,7 @@ package com.projectopel.attendanceautomation.Dashboard;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -59,6 +60,8 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 
         setSupportActionBar(toolbar);
 
+        Log.d("Activity Check","-----  In dashboard Activity");
+
 
         drawerLayout = findViewById(R.id.dashboard_drawer_layout);
         toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.nav_open, R.string.nav_close);
@@ -92,21 +95,10 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
         // tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
 
-        databaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(snapshot.exists()) {
-                    viewPager.setAdapter(new DashboardAdapter(DashboardActivity.this, getSupportFragmentManager(), tabLayout.getTabCount(),snapshot.child("users").child(auth.getUid())));
+
+                    viewPager.setAdapter(new DashboardAdapter(DashboardActivity.this, getSupportFragmentManager(), tabLayout.getTabCount()));
                     viewPager.getCurrentItem();
-                }
 
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
 
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
 

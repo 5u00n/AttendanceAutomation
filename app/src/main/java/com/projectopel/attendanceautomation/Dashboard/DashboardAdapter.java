@@ -18,12 +18,11 @@ public class DashboardAdapter extends FragmentPagerAdapter {
 
     Context context;
 
-    DataSnapshot snapshot;
-    public DashboardAdapter(Context context, FragmentManager fm, int totalTabs,DataSnapshot snapshot) {
+    public DashboardAdapter(Context context, FragmentManager fm, int totalTabs) {
         super(fm);
         this.context= context;
         this.totalTabs = totalTabs;
-        this.snapshot= snapshot;
+
     }
 
     @NonNull
@@ -32,7 +31,7 @@ public class DashboardAdapter extends FragmentPagerAdapter {
 
         switch (position){
             case 0:
-                return new ProfileFragment(snapshot);
+                return new ProfileFragment();
             case 1:
                 return new WeeklyReportFragment();
             case 2:

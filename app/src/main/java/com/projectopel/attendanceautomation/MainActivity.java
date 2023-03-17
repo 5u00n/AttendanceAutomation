@@ -1,7 +1,11 @@
 package com.projectopel.attendanceautomation;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -30,13 +34,25 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        setContentView(R.layout.activity_main);
+
+        Log.d("Activity Check","-----  In Main Activity");
         auth = FirebaseAuth.getInstance();
 
         cuser = auth.getCurrentUser();
         database = FirebaseDatabase.getInstance();
 
         reference = database.getReference();
-        checkAuth();
+        ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        boolean connected = (connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
+                connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED);
+        if(connected){
+            checkAuth();
+        }else{
+
+        }
+
 
         //startActivity(new Intent(this, DashboardActivity.class));
         //finish();
@@ -44,14 +60,21 @@ public class MainActivity extends AppCompatActivity {
 
     private void checkAuth() {
 
+
+
         if (cuser == null) {
             startActivity(new Intent(this, LoginActivity.class));
             finish();
         } else {
-            reference.child("users").child(auth.getUid()).child("f-data").addListenerForSingleValueEvent(new ValueEventListener() {
+
+
+            reference.child("users").child(auth.getUid()).child("f-data").addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    Log.d("------------ Logic","snapshots");
                     if (snapshot.exists()) {
+
+
                         startActivity(new Intent(MainActivity.this, DashboardActivity.class));
                         finish();
                     } else {
@@ -62,8 +85,11 @@ public class MainActivity extends AppCompatActivity {
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {
+                    Log.d("+++++ Error Check",error.toString());
 
                 }
+
+
             });
         }
     }

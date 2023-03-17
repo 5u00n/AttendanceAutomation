@@ -53,7 +53,7 @@ public class RequestsAdapter extends ArrayAdapter<RequestsModel> {
                 break;
         }
         status.setText(a.getStatus());
-        date.setText("From : "+a.getFrom_date()+" - to : "+a.getTo_date());
+        date.setText("From : "+a.getFrom_date()+" to : "+a.getTo_date());
         reason.setText(a.getReason());
 
         return v;
