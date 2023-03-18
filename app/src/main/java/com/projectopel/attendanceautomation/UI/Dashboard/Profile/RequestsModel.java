@@ -1,10 +1,11 @@
-package com.projectopel.attendanceautomation.Dashboard.Profile;
+package com.projectopel.attendanceautomation.UI.Dashboard.Profile;
 
 public class RequestsModel {
 
-    String id,sr_no,status,from_date,to_date,reason,reason_details,reason_document_url;
+    String id,date_generated,sr_no,status,from_date,to_date,reason,reason_details,reason_document_url;
 
-    public RequestsModel(String id, String sr_no, String status, String from_date, String to_date, String reason, String reason_details, String reason_document_url) {
+    public RequestsModel(String id, String sr_no, String date_generated,String status, String from_date, String to_date, String reason, String reason_details, String reason_document_url) {
+
         this.id = id;
         this.sr_no = sr_no;
         this.status = status;
@@ -13,6 +14,7 @@ public class RequestsModel {
         this.reason = reason;
         this.reason_details = reason_details;
         this.reason_document_url = reason_document_url;
+        this.date_generated= date_generated;
     }
 
     public RequestsModel(String id, String sr_no, String status, String from_date, String to_date, String reason) {
@@ -26,6 +28,14 @@ public class RequestsModel {
 
     public String getId() {
         return id;
+    }
+
+    public String getDate_generated() {
+        return date_generated;
+    }
+
+    public void setDate_generated(String date_generated) {
+        this.date_generated = date_generated;
     }
 
     public void setId(String id) {

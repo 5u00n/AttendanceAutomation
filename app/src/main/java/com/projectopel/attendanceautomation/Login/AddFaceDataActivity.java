@@ -45,7 +45,7 @@ import com.google.mlkit.vision.face.FaceDetector;
 import com.google.mlkit.vision.face.FaceDetectorOptions;
 import com.projectopel.attendanceautomation.CustomView.CircleProgressBar;
 import com.projectopel.attendanceautomation.FaceRecognisitionHelper.SimilarityClassifier;
-import com.projectopel.attendanceautomation.Dashboard.DashboardActivity;
+import com.projectopel.attendanceautomation.UI.Dashboard.DashboardActivity;
 import com.projectopel.attendanceautomation.R;
 
 import org.tensorflow.lite.Interpreter;

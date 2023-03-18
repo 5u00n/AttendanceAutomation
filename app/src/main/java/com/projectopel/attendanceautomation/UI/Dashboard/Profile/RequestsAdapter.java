@@ -1,4 +1,4 @@
-package com.projectopel.attendanceautomation.Dashboard.Profile;
+package com.projectopel.attendanceautomation.UI.Dashboard.Profile;
 
 import android.content.Context;
 import android.graphics.Color;

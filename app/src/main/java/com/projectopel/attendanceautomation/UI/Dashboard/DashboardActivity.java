@@ -1,6 +1,7 @@
-package com.projectopel.attendanceautomation.Dashboard;
+package com.projectopel.attendanceautomation.UI.Dashboard;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,12 +11,10 @@ import android.widget.Toast;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.projectopel.attendanceautomation.R;
+import com.projectopel.attendanceautomation.UI.Leaves.LeaveActivity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -156,6 +155,7 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
         switch (item.getItemId()) {
             case R.id.menu_leave:
                 Toast.makeText(this, "Leave", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(DashboardActivity.this, LeaveActivity.class));
                 break;
             case R.id.menu_reports:
                 Toast.makeText(this, "Reports", Toast.LENGTH_SHORT).show();

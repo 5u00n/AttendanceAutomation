@@ -1,4 +1,4 @@
-package com.projectopel.attendanceautomation.Dashboard.Week;
+package com.projectopel.attendanceautomation.UI.Dashboard.Week;
 
 public class WeeklyReportModel {
     String img ,day, intime, outtime;

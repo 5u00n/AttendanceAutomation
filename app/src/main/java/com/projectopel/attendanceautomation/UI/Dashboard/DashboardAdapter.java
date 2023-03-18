@@ -1,11 +1,10 @@
-package com.projectopel.attendanceautomation.Dashboard;
+package com.projectopel.attendanceautomation.UI.Dashboard;
 
 import android.content.Context;
 
-import com.google.firebase.database.DataSnapshot;
-import com.projectopel.attendanceautomation.Dashboard.Profile.ProfileFragment;
-import com.projectopel.attendanceautomation.Dashboard.Month.MonthlyReportFragment;
-import com.projectopel.attendanceautomation.Dashboard.Week.WeeklyReportFragment;
+import com.projectopel.attendanceautomation.UI.Dashboard.Profile.ProfileFragment;
+import com.projectopel.attendanceautomation.UI.Dashboard.Month.MonthlyReportFragment;
+import com.projectopel.attendanceautomation.UI.Dashboard.Week.WeeklyReportFragment;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;

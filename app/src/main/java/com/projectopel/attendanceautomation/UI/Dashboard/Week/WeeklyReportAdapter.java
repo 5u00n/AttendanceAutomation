@@ -1,4 +1,4 @@
-package com.projectopel.attendanceautomation.Dashboard.Week;
+package com.projectopel.attendanceautomation.UI.Dashboard.Week;
 
 import android.content.Context;
 import android.view.LayoutInflater;

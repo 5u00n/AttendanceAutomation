@@ -1,11 +1,10 @@
-package com.projectopel.attendanceautomation.Dashboard.Profile;
+package com.projectopel.attendanceautomation.UI.Dashboard.Profile;
 
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,11 +23,12 @@ import com.projectopel.attendanceautomation.R;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class ProfileFragment extends Fragment {
 
     ImageView profile;
-    TextView name, address, info_text, absent_stats, present_stats, leave_stats,total_stats;
+    TextView name, address, info_text, absent_stats, present_stats, leave_stats,balance_stats,total_stats;
     Button report, manual_attendance;
     ListView request_list;
 
@@ -61,6 +61,7 @@ public class ProfileFragment extends Fragment {
         absent_stats= v.findViewById(R.id.profile_absent_stats);
         present_stats= v.findViewById(R.id.profile_present_stats);
         leave_stats=v.findViewById(R.id.profile_leave_stats);
+        leave_stats=v.findViewById(R.id.profile_absent_leave_balance);
         total_stats= v.findViewById(R.id.profile_total_stats);
 
         profile= v.findViewById(R.id.fragment_profile_image);
@@ -75,6 +76,8 @@ public class ProfileFragment extends Fragment {
         database = FirebaseDatabase.getInstance();
         auth = FirebaseAuth.getInstance();
         reference = database.getReference("users").child(auth.getUid());
+
+        ArrayList<RequestsModel> ll = new ArrayList<>();
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -89,22 +92,28 @@ public class ProfileFragment extends Fragment {
                     address.setText(snapshot.child("address").child("place").getValue().toString() + ", " + snapshot.child("address").child("city").getValue().toString() + ", " + snapshot.child("address").child("pin").getValue().toString());
 
 
-                    String absent,present,leave;
+                    String absent,present,leave,leave_balance;
                     absent=snapshot.child("attendance_stats").child("absent_stats").getValue().toString();
                     present=snapshot.child("attendance_stats").child("present_stats").getValue().toString();
                     leave=snapshot.child("attendance_stats").child("leave_stats").getValue().toString();
+                    leave_balance=snapshot.child("attendance_stats").child("leave_balance").getValue().toString();
 
 
                     absent_stats.setText(absent);
                     present_stats.setText(present);
                     leave_stats.setText(leave);
-                    total_stats.setText(String.valueOf(Integer.parseInt(absent)+Integer.parseInt(present)+Integer.parseInt(leave)));
+                    leave_stats.setText(leave_balance);
+                    total_stats.setText(String.valueOf(Integer.parseInt(absent)+Integer.parseInt(present)+Integer.parseInt(leave)+Integer.parseInt(leave_balance)));
 
 
+                    int i=1;
 
-                    ArrayList<RequestsModel> ll = new ArrayList<>();
-                    ll.add(new RequestsModel("jkaghfduiass", "1", "Waiting", "18/03/2023", "26/02/2023", "Personal'k,jmp;lol nn Issue"));
-                    ll.add(new RequestsModel("wjkaghfduias", "2", "Rejected", "20/02/2023", "26/02/2023", "Sick Leave"));
+                    for(DataSnapshot ds: snapshot.child("requests").getChildren()){
+                        ll.add(new RequestsModel(ds.getKey(), String.valueOf(i), ds.child("status").getValue().toString(), ds.child("from_date").getValue().toString(), ds.child("to_date").getValue().toString(), ds.child("reason").getValue().toString()));
+                        i++;
+
+                    }
+                    Collections.reverse(ll);
 
                     request_list.setAdapter(new RequestsAdapter(getContext(), ll));
                 }

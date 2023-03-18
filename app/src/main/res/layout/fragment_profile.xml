@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".Dashboard.Week.WeeklyReportFragment">
+    tools:context=".UI.Dashboard.Week.WeeklyReportFragment">
 <androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -99,10 +99,13 @@
             android:gravity="center"
             android:orientation="horizontal">
             <LinearLayout
-                android:layout_width="80dp"
+
+                android:layout_marginHorizontal="@dimen/stats_horizontal_margin"
+
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:layout_marginHorizontal="7dp"
                 android:orientation="vertical">
                 <TextView
                     android:layout_width="wrap_content"
@@ -116,8 +119,10 @@
                     android:text="Absents"/>
             </LinearLayout>
             <LinearLayout
-                android:layout_marginHorizontal="7dp"
-                android:layout_width="80dp"
+
+                android:layout_weight="1"
+                android:layout_marginHorizontal="@dimen/stats_horizontal_margin"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:orientation="vertical">
@@ -133,8 +138,10 @@
                     android:text="Present"/>
             </LinearLayout>
             <LinearLayout
-                android:layout_marginHorizontal="7dp"
-                android:layout_width="80dp"
+
+                android:layout_weight="1"
+                android:layout_marginHorizontal="@dimen/stats_horizontal_margin"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:orientation="vertical">
@@ -150,36 +157,36 @@
                     android:text="Leave"/>
             </LinearLayout>
 
-        </LinearLayout>
 
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:paddingHorizontal="20dp"
-        android:gravity="center"
-        android:orientation="horizontal">
         <LinearLayout
-            android:layout_width="80dp"
+
+            android:layout_weight="1"
+            android:layout_marginHorizontal="@dimen/stats_horizontal_margin"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:layout_marginHorizontal="7dp"
             android:orientation="vertical">
+
             <TextView
+                android:id="@+id/profile_absent_leave_balance"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="7"
-                android:textSize="26sp"
-                android:id="@+id/profile_absent_leave_balance"/>
+                android:textSize="26sp" />
+
             <TextView
-                android:textAlignment="center"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Leave balance"/>
+                android:text="Balance"
+                android:textAlignment="center" />
         </LinearLayout>
+
         <LinearLayout
-            android:layout_marginHorizontal="7dp"
-            android:layout_width="80dp"
+
+            android:layout_weight="1"
+            android:layout_marginHorizontal="@dimen/stats_horizontal_margin"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center"
             android:orientation="vertical">
@@ -203,14 +210,14 @@
             android:layout_marginTop="30dp"
             android:paddingHorizontal="20dp"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:gravity="center"
             android:layout_marginBottom="80dp"
             android:orientation="horizontal">
 
             <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:gravity="center"
                 android:rotation="270"
                 android:layout_marginLeft="-20dp"
@@ -218,11 +225,11 @@
                 android:text="REQUESTS" />
 
             <ListView
-                android:paddingVertical="20dp"
                 android:id="@+id/profile_list_reports"
-                android:paddingLeft="10dp"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingVertical="20dp"
+                android:paddingLeft="10dp"
 
 
                 />

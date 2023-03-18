@@ -7,13 +7,14 @@
     android:id="@+id/dashboard_drawer_layout"
     android:fitsSystemWindows="true"
     tools:openDrawer="start"
-    tools:context=".Dashboard.DashboardActivity">
+    tools:context=".UI.Dashboard.DashboardActivity">
 
     <include
         layout="@layout/swipe_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
     <com.google.android.material.navigation.NavigationView
+        android:paddingTop="55dp"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:id="@+id/dashboard_nav_view"
