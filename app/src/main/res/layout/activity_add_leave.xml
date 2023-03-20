@@ -74,15 +74,20 @@
             android:layout_marginBottom="20dp"
             android:hint="Reason..." />
 
-        <EditText
+        <TextView
+            android:padding="7dp"
+            android:background="@drawable/border_text"
+            android:textSize="18sp"
             android:id="@+id/add_leave_from_date"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
-            android:inputType="date"
             android:hint="From Date" />
 
-        <EditText
+        <TextView
+            android:padding="7dp"
+            android:textSize="18sp"
+            android:background="@drawable/border_text"
             android:id="@+id/add_leave_to_date"
             android:layout_width="200dp"
             android:layout_height="wrap_content"

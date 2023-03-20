@@ -19,6 +19,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.projectopel.attendanceautomation.UI.Dashboard.DashboardActivity;
 import com.projectopel.attendanceautomation.Login.AddFaceDataActivity;
 import com.projectopel.attendanceautomation.Login.LoginActivity;
+import com.projectopel.attendanceautomation.UI.Leaves.AddLeaveActivity;
 import com.projectopel.attendanceautomation.UI.Leaves.LeaveActivity;
 
 import androidx.annotation.NonNull;
@@ -85,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
                     if (snapshot.exists()) {
 
 
-                        startActivity(new Intent(MainActivity.this, LeaveActivity.class));
+                        startActivity(new Intent(MainActivity.this, AddLeaveActivity.class));
                         finish();
                     } else {
                         startActivity(new Intent(MainActivity.this, AddFaceDataActivity.class));
