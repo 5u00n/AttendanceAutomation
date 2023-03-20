@@ -6,7 +6,9 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -17,6 +19,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.projectopel.attendanceautomation.UI.Dashboard.DashboardActivity;
 import com.projectopel.attendanceautomation.Login.AddFaceDataActivity;
 import com.projectopel.attendanceautomation.Login.LoginActivity;
+import com.projectopel.attendanceautomation.UI.Leaves.LeaveActivity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -51,6 +54,13 @@ public class MainActivity extends AppCompatActivity {
             checkAuth();
         }else{
 
+            Snackbar snackbar = Snackbar.make(findViewById(R.id.main_layout),"No Internet Connection",Snackbar.LENGTH_LONG).setAction("Retry", new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Refresh Page Code Page
+                }
+            });
+            snackbar.show();
         }
 
 
@@ -75,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
                     if (snapshot.exists()) {
 
 
-                        startActivity(new Intent(MainActivity.this, DashboardActivity.class));
+                        startActivity(new Intent(MainActivity.this, LeaveActivity.class));
                         finish();
                     } else {
                         startActivity(new Intent(MainActivity.this, AddFaceDataActivity.class));

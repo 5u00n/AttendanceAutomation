@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/layout_root"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical">
+
+
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.Toolbar
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:paddingLeft="-30dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="-40dp"
+                android:orientation="horizontal">
+
+                <ImageButton
+                    android:id="@+id/add_leave_imagebutton_goback"
+                    android:layout_width="?attr/actionBarSize"
+                    android:layout_height="?attr/actionBarSize"
+                    android:layout_marginLeft="-15dp"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="Go back"
+                    android:src="@drawable/baseline_arrow_back_24" />
+
+                <TextView
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="Add Requests"
+                    android:textSize="22sp" />
+
+
+                <Button
+                    android:layout_marginLeft="70dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Submit"
+                    android:id="@+id/add_leave_button_submit"/>
+            </LinearLayout>
+
+
+        </androidx.appcompat.widget.Toolbar>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+
+        <EditText
+            android:id="@+id/add_leave_reason"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:hint="Reason..." />
+
+        <EditText
+            android:id="@+id/add_leave_from_date"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:inputType="date"
+            android:hint="From Date" />
+
+        <EditText
+            android:id="@+id/add_leave_to_date"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:inputType="date"
+            android:hint="To Date" />
+
+        <EditText
+            android:id="@+id/add_leave_reason_details"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:maxLength="600"
+            android:textAlignment="textStart"
+            android:hint="Reason details..." />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Select Document"
+            android:layout_gravity="center"
+            android:id="@+id/add_leave_select_document"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="file_url"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            android:id="@+id/add_leave_file_url"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="filename"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            android:id="@+id/add_leave_filename"/>
+        <ImageView
+            android:layout_width="450dp"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:layout_gravity="center"
+            android:id="@+id/add_leave_image_file"/>
+
+
+
+
+    </LinearLayout>
+    </ScrollView>
+
+
+</LinearLayout>

@@ -18,14 +18,16 @@ import androidx.annotation.Nullable;
 public class RequestsAdapter extends ArrayAdapter<RequestsModel> {
 
     ArrayList<RequestsModel> list = new ArrayList<>();
+    Context context;
     public RequestsAdapter(@NonNull Context context, ArrayList<RequestsModel> list) {
         super(context,0, list);
+        this.context=context;
     }
 
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        View v= LayoutInflater.from(getContext()).inflate(R.layout.view_home_requests,parent,false);
+        View v= LayoutInflater.from(context).inflate(R.layout.view_home_requests,parent,false);
 
 
         TextView id,sr_no,date,reason,status;

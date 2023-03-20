@@ -156,6 +156,7 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
             case R.id.menu_leave:
                 Toast.makeText(this, "Leave", Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(DashboardActivity.this, LeaveActivity.class));
+                finish();
                 break;
             case R.id.menu_reports:
                 Toast.makeText(this, "Reports", Toast.LENGTH_SHORT).show();

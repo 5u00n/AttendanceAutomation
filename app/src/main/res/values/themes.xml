@@ -31,6 +31,8 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <item name="android:fillColor">@color/md_theme_dark_background</item>
+        <item name="listFontColor">@color/md_theme_dark_background</item>
+
         <!-- Customize your theme here. -->
     </style>
 
