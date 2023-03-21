@@ -64,9 +64,6 @@ public class MainActivity extends AppCompatActivity {
             snackbar.show();
         }
 
-
-        //startActivity(new Intent(this, DashboardActivity.class));
-        //finish();
     }
 
     private void checkAuth() {
@@ -96,10 +93,8 @@ public class MainActivity extends AppCompatActivity {
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {
-                    Log.d("+++++ Error Check",error.toString());
-
+                    Log.d("+++++ Error Check", error.toString());
                 }
-
 
             });
         }
