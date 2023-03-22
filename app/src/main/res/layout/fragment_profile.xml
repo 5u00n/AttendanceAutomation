@@ -242,21 +242,6 @@
 
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:gravity="center"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
 
-        <Button
-            android:id="@+id/profile_button_manual_attendance"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Manual Attendance" />
-    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>

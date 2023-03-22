@@ -3,16 +3,23 @@ package com.projectopel.attendanceautomation.UI.Dashboard;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.projectopel.attendanceautomation.FaceRecognisitionHelper.DetectFaceActivity;
 import com.projectopel.attendanceautomation.R;
 import com.projectopel.attendanceautomation.UI.Leaves.LeaveActivity;
 
@@ -25,9 +32,14 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.viewpager.widget.ViewPager;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 public class DashboardActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
 
+    private static final int MY_CAMERA_REQUEST_CODE = 100;
     //Firebase
     FirebaseAuth auth;
     FirebaseDatabase database;
@@ -44,6 +56,10 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
     ActionBarDrawerToggle toggle;
 
 
+    TextView today_text,attendance_status;
+    Button manual_attendance;
+
+
     private static final int NOTIFICATION_ID = 1;
     private static final String CHANNEL_ID = "MyNotificationChannel";
     private static final String CHANNEL_NAME = "My Notification Channel";
@@ -55,11 +71,12 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_dashboard);
+
+
+
         toolbar = findViewById(R.id.dashboard_toolbar);
-
         setSupportActionBar(toolbar);
-
-        Log.d("Activity Check","-----  In dashboard Activity");
+        Log.d("Activity Check", "-----  In dashboard Activity");
 
 
         drawerLayout = findViewById(R.id.dashboard_drawer_layout);
@@ -83,20 +100,31 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 
     }
 
-    void updateUI(){
+    void updateUI() {
 
-        auth= FirebaseAuth.getInstance();
-        database= FirebaseDatabase.getInstance();
-        databaseReference= database.getReference();
+        auth = FirebaseAuth.getInstance();
+        database = FirebaseDatabase.getInstance();
+        databaseReference = database.getReference("Attendance").child(auth.getUid()).child(new SimpleDateFormat("dd-MM-yyyy").format(Calendar.getInstance().getTime())).child("status");
 
+        today_text= findViewById(R.id.dashboard_text_date);
+        attendance_status= findViewById(R.id.dashboard_text_attendance_status);
+        manual_attendance= findViewById(R.id.dashboard_button_manual_attendance);
+
+        manual_attendance.setOnClickListener(v->{
+            Intent intent=new Intent(DashboardActivity.this, DetectFaceActivity.class);
+            startActivityForResult(intent, 2);
+        });
+
+
+
+        today_text.setText(new SimpleDateFormat("E, dd MM").format(Calendar.getInstance().getTime()));
 
 
         // tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
 
-
-                    viewPager.setAdapter(new DashboardAdapter(DashboardActivity.this, getSupportFragmentManager(), tabLayout.getTabCount()));
-                    viewPager.getCurrentItem();
+        viewPager.setAdapter(new DashboardAdapter(DashboardActivity.this, getSupportFragmentManager(), tabLayout.getTabCount()));
+        viewPager.getCurrentItem();
 
 
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
@@ -118,6 +146,43 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
             }
         });
 
+
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(snapshot.exists()){
+                    String state= snapshot.getValue().toString();
+                    attendance_status.setText(state);
+                    if(state.equals("Present")){
+                        attendance_status.setTextColor(Color.GREEN);
+                    }if(state.equals("Absent")){
+                        attendance_status.setTextColor(Color.RED);
+                    }
+               }else{
+                    attendance_status.setText("NAN");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        super.onActivityResult(requestCode, resultCode, data);
+        // check if the request code is same as what is passed  here it is 2
+        if(requestCode==2)
+        {
+            String message=data.getStringExtra("AUTH");
+            Toast.makeText(this,message, Toast.LENGTH_SHORT).show();
+            Log.d("From second activity",message);
+        }
     }
 
 
@@ -134,6 +199,11 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
+
+        if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.CAMERA}, MY_CAMERA_REQUEST_CODE);
+
+        }
     }
 
     @Override
@@ -144,6 +214,13 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
                 Toast.makeText(this, "Location permission granted", Toast.LENGTH_LONG).show();
             } else {
                 Toast.makeText(this, "Location permission denied", Toast.LENGTH_LONG).show();
+            }
+        }
+        if (requestCode == MY_CAMERA_REQUEST_CODE) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "camera permission granted", Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(this, "camera permission denied", Toast.LENGTH_LONG).show();
             }
         }
     }

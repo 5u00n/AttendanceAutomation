@@ -29,7 +29,7 @@ public class ProfileFragment extends Fragment {
 
     ImageView profile;
     TextView name, address, info_text, absent_stats, present_stats, leave_stats,balance_stats,total_stats;
-    Button report, manual_attendance;
+    Button report;
     ListView request_list;
 
     DataSnapshot snapshot = null;
@@ -67,7 +67,6 @@ public class ProfileFragment extends Fragment {
         profile= v.findViewById(R.id.fragment_profile_image);
 
         report=v.findViewById(R.id.profile_button_report);
-        manual_attendance= v.findViewById(R.id.profile_button_manual_attendance);
 
 
 
