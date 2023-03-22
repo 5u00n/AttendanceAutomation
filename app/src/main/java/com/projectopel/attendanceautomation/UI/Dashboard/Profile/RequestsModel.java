@@ -4,6 +4,10 @@ public class RequestsModel {
 
     String id,date_generated,sr_no,status,from_date,to_date,reason,reason_details,reason_document_url;
 
+    public RequestsModel(){
+
+    }
+
     public RequestsModel(String id, String sr_no, String date_generated,String status, String from_date, String to_date, String reason, String reason_details, String reason_document_url) {
 
         this.id = id;

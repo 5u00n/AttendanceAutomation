@@ -72,7 +72,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
-            android:hint="Reason..." />
+            android:hint="* Reason..." />
 
         <TextView
             android:padding="7dp"
@@ -82,7 +82,7 @@
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
-            android:hint="From Date" />
+            android:hint="* From Date" />
 
         <TextView
             android:padding="7dp"
@@ -93,7 +93,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
             android:inputType="date"
-            android:hint="To Date" />
+            android:hint="*To Date" />
 
         <EditText
             android:id="@+id/add_leave_reason_details"
@@ -102,7 +102,7 @@
             android:layout_marginBottom="20dp"
             android:maxLength="600"
             android:textAlignment="textStart"
-            android:hint="Reason details..." />
+            android:hint="* Reason details..." />
 
         <Button
             android:layout_width="wrap_content"

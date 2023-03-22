@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
                     if (snapshot.exists()) {
 
 
-                        startActivity(new Intent(MainActivity.this, AddLeaveActivity.class));
+                        startActivity(new Intent(MainActivity.this, DashboardActivity.class));
                         finish();
                     } else {
                         startActivity(new Intent(MainActivity.this, AddFaceDataActivity.class));
@@ -99,4 +99,6 @@ public class MainActivity extends AppCompatActivity {
             });
         }
     }
+
+
 }

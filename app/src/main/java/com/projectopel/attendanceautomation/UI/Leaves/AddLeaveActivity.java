@@ -19,6 +19,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -55,6 +56,7 @@ public class AddLeaveActivity extends AppCompatActivity {
     StorageReference stor_ref;
 
     private static int PICK_IMAGE = 123;
+    SimpleDateFormat sdf = new SimpleDateFormat("dd/M/yyyy");
     Uri imageUri = null;
 
     @Override
@@ -96,7 +98,7 @@ public class AddLeaveActivity extends AppCompatActivity {
             finish();
         });
 
-        submit.setOnClickListener(v -> submitData());
+        submit.setOnClickListener(v -> checkAllFields());
 
         select_document.setOnClickListener(v -> {
             Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
@@ -136,7 +138,7 @@ public class AddLeaveActivity extends AppCompatActivity {
                 String dt =datePicker.getDayOfMonth() + "/" + (datePicker.getMonth()+1)+ "/" + datePicker.getYear();
 
                 //datePicker.get
-                SimpleDateFormat sdf = new SimpleDateFormat("dd/M/yyyy");
+
                 String date = null;
                 try {
                     date = sdf.format(sdf.parse(dt));
@@ -221,8 +223,57 @@ public class AddLeaveActivity extends AppCompatActivity {
         // show it
         alertDialog.show();
     }
+    
+    private void checkAllFields(){
+        if(reason.getText().toString().isEmpty() || from_date.getText().toString().isEmpty()||to_date.getText().toString().isEmpty()||reason_details.getText().toString().isEmpty()){
+            Toast.makeText(this, "Please give all Information", Toast.LENGTH_SHORT).show();
+        }else {
+            finalConfirmation();
+        }
+    }
+    
+    
+    private void finalConfirmation(){
+        AlertDialog alertDialog = new AlertDialog.Builder(AddLeaveActivity.this).create();
+        alertDialog.setTitle("Alert");
+        alertDialog.setMessage("Are you sure you want to submit ?");
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "YES",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        Toast.makeText(AddLeaveActivity.this, "OK", Toast.LENGTH_SHORT).show();
+                        submitData();
+                    }
+                });
+        alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "NO", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
+        });
+        alertDialog.show();
+    }
 
     private void submitData() {
+
+        RequestsModel rm = new RequestsModel();
+
+        Date date= new Date();
+        rm.setId(auth.getUid()+"_"+Calendar.getInstance().getTime().toString());
+        rm.setStatus("Waiting");
+        rm.setDate_generated(sdf.format(date));
+        rm.setReason(reason.getText().toString());
+        rm.setFrom_date(from_date.getText().toString());
+        rm.setTo_date(to_date.getText().toString());
+        rm.setReason_details(reason_details.getText().toString());
+
+        if(imageUri !=null) {
+            sendImagetoStorage(rm, imageUri);
+        }
+        else {
+            sendToRealtimeDatabase(rm);
+        }
+
+       
     }
 
     @Override
@@ -232,6 +283,9 @@ public class AddLeaveActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PICK_IMAGE && resultCode == RESULT_OK) {
             imageUri = data.getData();
+
+            file_imageview.setImageURI(imageUri);
+            file_imageview.setVisibility(View.VISIBLE);
             Log.d("Img Uri ------", data.getData().toString());
         }
 
@@ -244,7 +298,7 @@ public class AddLeaveActivity extends AppCompatActivity {
         StorageReference storageRef = storage.getReference();
         //StorageReference imageref = storageRef.child("Images").child(firebaseAuth.getUid()).child("Profile Pic");
 
-        StorageReference imageref = storageRef.child("Plants").child("..").child("image");
+        StorageReference imageref = storageRef.child("users").child(auth.getUid()).child("leave").child(rs.getId());
 
         UploadTask uploadTask = imageref.putFile(imguri);
         final Uri[] downloadUri = new Uri[1];
@@ -264,7 +318,7 @@ public class AddLeaveActivity extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     downloadUri[0] = task.getResult();
                     Log.d("Download uri", downloadUri[0].toString());
-                    // pm.setImgurl(downloadUri[0].toString());
+                   // file_url.setImgurl(downloadUri[0].toString());
                     sendToRealtimeDatabase(rs);
 
                 } else {
@@ -278,11 +332,12 @@ public class AddLeaveActivity extends AppCompatActivity {
     }
 
     public void sendToRealtimeDatabase(RequestsModel rs) {
-        FirebaseDatabase storage = FirebaseDatabase.getInstance();
-        DatabaseReference reference = storage.getReference("plants");
-        reference.child(rs.getId()).setValue(rs);
+
+        data_ref.child("users").child(auth.getUid()).child("requests").child(rs.getId()).setValue(rs);
+        data_ref.child("requests").child(rs.getId()).setValue(rs);
 
         imageUri = null;
+        finish();
 
     }
 
