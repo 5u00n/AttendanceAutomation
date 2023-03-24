@@ -1,5 +1,10 @@
 package com.projectopel.attendanceautomation.FaceRecognisitionHelper;
 
+import static com.projectopel.attendanceautomation.FaceRecognisitionHelper.CollectionHelper.getCropBitmapByCPU;
+import static com.projectopel.attendanceautomation.FaceRecognisitionHelper.CollectionHelper.getResizedBitmap;
+import static com.projectopel.attendanceautomation.FaceRecognisitionHelper.CollectionHelper.rotateBitmap;
+import static com.projectopel.attendanceautomation.FaceRecognisitionHelper.CollectionHelper.toBitmap;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.core.CameraSelector;
@@ -21,22 +26,20 @@ import android.content.pm.PackageManager;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.ImageFormat;
-import android.graphics.Matrix;
-import android.graphics.Paint;
-import android.graphics.Rect;
+
 import android.graphics.RectF;
-import android.graphics.YuvImage;
 import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ParcelFileDescriptor;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.util.Pair;
 import android.util.Size;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -49,6 +52,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -58,7 +62,6 @@ import com.google.mlkit.vision.face.FaceDetection;
 import com.google.mlkit.vision.face.FaceDetector;
 import com.google.mlkit.vision.face.FaceDetectorOptions;
 import com.projectopel.attendanceautomation.CustomView.CircleProgressBar;
-import com.projectopel.attendanceautomation.Login.AddFaceDataActivity;
 import com.projectopel.attendanceautomation.R;
 
 import org.tensorflow.lite.Interpreter;
@@ -70,11 +73,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.MappedByteBuffer;
-import java.nio.ReadOnlyBufferException;
 import java.nio.channels.FileChannel;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -83,9 +82,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 
 public class DetectFaceActivity extends AppCompatActivity {
 
@@ -96,7 +92,7 @@ public class DetectFaceActivity extends AppCompatActivity {
     PreviewView previewView;
     Interpreter tfLite;
     Button recognize;
-    private String name;
+    //private String name="ben";
     CameraSelector cameraSelector;
     boolean developerMode = false;
     float distance = 1.0f;
@@ -117,6 +113,7 @@ public class DetectFaceActivity extends AppCompatActivity {
     private static final int MY_CAMERA_REQUEST_CODE = 100;
 
     CircleProgressBar cpb;
+    TextView cont_text;
 
 
     String modelFile = "mobile_face_net.tflite"; //model name
@@ -130,6 +127,8 @@ public class DetectFaceActivity extends AppCompatActivity {
     DatabaseReference dbRef;
     String push_id;
 
+    int count = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -138,17 +137,16 @@ public class DetectFaceActivity extends AppCompatActivity {
         database = FirebaseDatabase.getInstance();
         mAuth = FirebaseAuth.getInstance();
 
-        Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            name = extras.getString("name");
-        }
-
 
         SharedPreferences sharedPref = getSharedPreferences("Distance", Context.MODE_PRIVATE);
         distance = sharedPref.getFloat("distance", 1.00f);
 
-       // recognize = findViewById(R.id.det);
+        // recognize = findViewById(R.id.det);
         cpb = (CircleProgressBar) findViewById(R.id.detect_face_progress);
+        cont_text = findViewById(R.id.detect_face_scan_count);
+
+
+        // cpb.setOn
 
         //Camera Permission
         if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
@@ -160,24 +158,38 @@ public class DetectFaceActivity extends AppCompatActivity {
             flipX = true;
         }
 
-        initFaceRecognisation();
+        readFromFireStore(new FaceDataCallaback() {
+            @Override
+            public void onCallback(HashMap<String, SimilarityClassifier.Recognition> rr) {
+                setRegisteredSp(rr);
+
+                //Log.d("***data***", new Gson().toJson(rr));
+
+                initFaceRecognisation();
+
+
+            }
+        });
 
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             public void run() {
-                // yourMethod();
-                Intent intent=new Intent();
-                intent.putExtra("AUTH","TRUE");
-                setResult(2,intent);
-                finish();//finishing activity
+                Intent intent = new Intent();
+                intent.putExtra("AUTH", "FALSE");
+                setResult(2, intent);
+                finish();
             }
-        }, 5000);   //5 seconds
+        }, 10000);   //5 seconds
 
+    }
+
+    private void setRegisteredSp(HashMap<String, SimilarityClassifier.Recognition> registered) {
+        this.registered = registered;
     }
 
     void initFaceRecognisation() {
 
-        //DatabaseReference facedataref = firebaseDatabase.getReference(msenderuid);
+        DatabaseReference facedataref = database.getReference("users").child(mAuth.getUid()).child("f-data");
         distance = 1.00f;
 
         //Camera Permission
@@ -266,10 +278,7 @@ public class DetectFaceActivity extends AppCompatActivity {
 
                 if (mediaImage != null) {
                     image = InputImage.fromMediaImage(mediaImage, imageProxy.getImageInfo().getRotationDegrees());
-//                    System.out.println("Rotation "+imageProxy.getImageInfo().getRotationDegrees());
                 }
-
-//                System.out.println("ANALYSIS");
 
                 //Process acquired image to detect faces
                 Task<List<Face>> result =
@@ -281,8 +290,7 @@ public class DetectFaceActivity extends AppCompatActivity {
 
                                                 if (faces.size() != 0) {
 
-                                                    Face face = faces.get(0); //Get first face from detected faces
-//                                                    System.out.println(face);
+                                                    Face face = faces.get(0);
 
                                                     //mediaImage to Bitmap
                                                     Bitmap frame_bmp = toBitmap(mediaImage);
@@ -301,23 +309,15 @@ public class DetectFaceActivity extends AppCompatActivity {
 
                                                     if (flipX)
                                                         cropped_face = rotateBitmap(cropped_face, 0, flipX, false);
-                                                    //Scale the acquired Face to 112*112 which is required input for model
                                                     Bitmap scaled = getResizedBitmap(cropped_face, 112, 112);
 
                                                     if (start)
-                                                        recognizeImage(scaled); //Send scaled bitmap to create face embeddings.
-//                                                    System.out.println(boundingBox);
+                                                        recognizeImage(scaled);
 
                                                 } else {
                                                     if (registered.isEmpty()) {
-                                                        //reco_name.setText("Add Face");
-                                                        // Log.d("**R-TEST", "************" + "NOT **ROGNISED");
-
-
 
                                                     } else {
-                                                        // Log.d("**R-TEST", "************" + "NOT FACE DETECTED");
-                                                        //reco_name.setText("No Face Detected!");
 
                                                     }
                                                 }
@@ -410,19 +410,31 @@ public class DetectFaceActivity extends AppCompatActivity {
                 distance_local = nearest.get(0).second;
                 if (developerMode) {
                     if (distance_local < distance) {
-                    }//If distance between Closest found face is more than 1.000 ,then output UNKNOWN face.
-                    //Log.d("**R-TEST", "************  " + "Nearest: " + name + "\nDist: " + String.format("%.3f", distance_local) + "\n2nd Nearest: " + nearest.get(1).first + "\nDist: " + String.format("%.3f", nearest.get(1).second));
-                    else {
+                    }  else {
                     }
-                    //Log.d("**R-TEST", "************  " + "Unknown " + "\nDist: " + String.format("%.3f", distance_local) + "\nNearest: " + name + "\nDist: " + String.format("%.3f", distance_local) + "\n2nd Nearest: " + nearest.get(1).first + "\nDist: " + String.format("%.3f", nearest.get(1).second));
-
                 } else {
                     if (distance_local < distance) {//If distance between Closest found face is more than 1.000 ,then output UNKNOWN face.
-                        /// Log.d("**R-TEST", "************  " + name);
+
+
+                        //int count=Integer.parseInt(cont_text.getText().toString());
+                        count++;
+
+
+                        // cont_text.setText(count);
+
+                        cpb.setProgress(count * 5);
+
+
+                        if (count * 5 == 100) {
+                            Intent intent = new Intent();
+                            intent.putExtra("AUTH", "TRUE");
+                            setResult(2, intent);
+                            finish();
+                        }
 
 
                     } else {
-                        //Log.d("**R-TEST", "************  " + "Unknown  FACE");
+                        // Log.d("**R-TEST", "************  " + "Unknown  FACE");
 
 
                     }
@@ -465,152 +477,6 @@ public class DetectFaceActivity extends AppCompatActivity {
     }
 
 
-    public Bitmap getResizedBitmap(Bitmap bm, int newWidth, int newHeight) {
-        int width = bm.getWidth();
-        int height = bm.getHeight();
-        float scaleWidth = ((float) newWidth) / width;
-        float scaleHeight = ((float) newHeight) / height;
-        // CREATE A MATRIX FOR THE MANIPULATION
-        Matrix matrix = new Matrix();
-        // RESIZE THE BIT MAP
-        matrix.postScale(scaleWidth, scaleHeight);
-
-        // "RECREATE" THE NEW BITMAP
-        Bitmap resizedBitmap = Bitmap.createBitmap(
-                bm, 0, 0, width, height, matrix, false);
-        bm.recycle();
-        return resizedBitmap;
-    }
-
-
-    private static Bitmap getCropBitmapByCPU(Bitmap source, RectF cropRectF) {
-        Bitmap resultBitmap = Bitmap.createBitmap((int) cropRectF.width(),
-                (int) cropRectF.height(), Bitmap.Config.ARGB_8888);
-        Canvas cavas = new Canvas(resultBitmap);
-
-        // draw background
-        Paint paint = new Paint(Paint.FILTER_BITMAP_FLAG);
-        paint.setColor(Color.WHITE);
-        cavas.drawRect(
-                new RectF(0, 0, cropRectF.width(), cropRectF.height()),
-                paint);
-
-        Matrix matrix = new Matrix();
-        matrix.postTranslate(-cropRectF.left, -cropRectF.top);
-
-        cavas.drawBitmap(source, matrix, paint);
-
-        if (source != null && !source.isRecycled()) {
-            source.recycle();
-        }
-
-        return resultBitmap;
-    }
-
-
-    private static Bitmap rotateBitmap(Bitmap bitmap, int rotationDegrees, boolean flipX, boolean flipY) {
-        Matrix matrix = new Matrix();
-
-        // Rotate the image back to straight.
-        matrix.postRotate(rotationDegrees);
-
-        // Mirror the image along the X or Y axis.
-        matrix.postScale(flipX ? -1.0f : 1.0f, flipY ? -1.0f : 1.0f);
-        Bitmap rotatedBitmap =
-                Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-
-        // Recycle the old bitmap if it has changed.
-        if (rotatedBitmap != bitmap) {
-            bitmap.recycle();
-        }
-        return rotatedBitmap;
-    }
-
-
-    //IMPORTANT. If conversion not done ,the toBitmap conversion does not work on some devices.
-    private static byte[] YUV_420_888toNV21(Image image) {
-
-        int width = image.getWidth();
-        int height = image.getHeight();
-        int ySize = width * height;
-        int uvSize = width * height / 4;
-
-        byte[] nv21 = new byte[ySize + uvSize * 2];
-
-        ByteBuffer yBuffer = image.getPlanes()[0].getBuffer(); // Y
-        ByteBuffer uBuffer = image.getPlanes()[1].getBuffer(); // U
-        ByteBuffer vBuffer = image.getPlanes()[2].getBuffer(); // V
-
-        int rowStride = image.getPlanes()[0].getRowStride();
-        assert (image.getPlanes()[0].getPixelStride() == 1);
-
-        int pos = 0;
-
-        if (rowStride == width) { // likely
-            yBuffer.get(nv21, 0, ySize);
-            pos += ySize;
-        } else {
-            long yBufferPos = -rowStride; // not an actual position
-            for (; pos < ySize; pos += width) {
-                yBufferPos += rowStride;
-                yBuffer.position((int) yBufferPos);
-                yBuffer.get(nv21, pos, width);
-            }
-        }
-
-        rowStride = image.getPlanes()[2].getRowStride();
-        int pixelStride = image.getPlanes()[2].getPixelStride();
-
-        assert (rowStride == image.getPlanes()[1].getRowStride());
-        assert (pixelStride == image.getPlanes()[1].getPixelStride());
-
-        if (pixelStride == 2 && rowStride == width && uBuffer.get(0) == vBuffer.get(1)) {
-            // maybe V an U planes overlap as per NV21, which means vBuffer[1] is alias of uBuffer[0]
-            byte savePixel = vBuffer.get(1);
-            try {
-                vBuffer.put(1, (byte) ~savePixel);
-                if (uBuffer.get(0) == (byte) ~savePixel) {
-                    vBuffer.put(1, savePixel);
-                    vBuffer.position(0);
-                    uBuffer.position(0);
-                    vBuffer.get(nv21, ySize, 1);
-                    uBuffer.get(nv21, ySize + 1, uBuffer.remaining());
-
-                    return nv21; // shortcut
-                }
-            } catch (ReadOnlyBufferException ex) {
-            }
-
-            vBuffer.put(1, savePixel);
-        }
-
-
-        for (int row = 0; row < height / 2; row++) {
-            for (int col = 0; col < width / 2; col++) {
-                int vuPos = col * pixelStride + row * rowStride;
-                nv21[pos++] = vBuffer.get(vuPos);
-                nv21[pos++] = uBuffer.get(vuPos);
-            }
-        }
-
-        return nv21;
-    }
-
-
-    private Bitmap toBitmap(Image image) {
-
-        byte[] nv21 = YUV_420_888toNV21(image);
-
-
-        YuvImage yuvImage = new YuvImage(nv21, ImageFormat.NV21, image.getWidth(), image.getHeight(), null);
-
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        yuvImage.compressToJpeg(new Rect(0, 0, yuvImage.getWidth(), yuvImage.getHeight()), 75, out);
-
-        byte[] imageBytes = out.toByteArray();
-        return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
-    }
-
     private void readFromFireStore(FaceDataCallaback fd) {
 
 
@@ -620,21 +486,23 @@ public class DetectFaceActivity extends AppCompatActivity {
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                String json = snapshot.getValue().toString();
-                JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
-                SimilarityClassifier.Recognition result2 = new SimilarityClassifier.Recognition("0", "", -1f);
-                JsonArray jsonArray = jsonObject.get(name).getAsJsonObject().get("extra").getAsJsonArray();
-                float[][] output = new float[1][OUTPUT_SIZE];
-                for (int i = 0; i < jsonArray.size(); i++) {
-                    JsonArray ar = jsonArray.get(i).getAsJsonArray();
-                    for (int j = 0; j < ar.size(); j++) {
-                        output[i][j] = ar.get(j).getAsFloat();
+                if (snapshot.exists()) {
+                    String json = snapshot.getValue().toString();
+                    JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
+                    SimilarityClassifier.Recognition result2 = new SimilarityClassifier.Recognition("0", "", -1f);
+                    JsonArray jsonArray = jsonObject.get(mAuth.getUid()).getAsJsonObject().get("extra").getAsJsonArray();
+                    float[][] output = new float[1][OUTPUT_SIZE];
+                    for (int i = 0; i < jsonArray.size(); i++) {
+                        JsonArray ar = jsonArray.get(i).getAsJsonArray();
+                        for (int j = 0; j < ar.size(); j++) {
+                            output[i][j] = ar.get(j).getAsFloat();
+                        }
                     }
-                }
-                result2.setExtra(output);
-                retrievedMap.put(name, result2);
-                fd.onCallback(retrievedMap);
+                    result2.setExtra(output);
+                    retrievedMap.put(mAuth.getUid(), result2);
+                    fd.onCallback(retrievedMap);
 
+                }
 
             }
 

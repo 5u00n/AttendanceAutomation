@@ -40,7 +40,6 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-        Log.d("Activity Check","-----  In Main Activity");
         auth = FirebaseAuth.getInstance();
 
         cuser = auth.getCurrentUser();
@@ -76,10 +75,9 @@ public class MainActivity extends AppCompatActivity {
         } else {
 
 
-            reference.child("users").child(auth.getUid()).child("f-data").addValueEventListener(new ValueEventListener() {
+            reference.child("users").child(auth.getUid()).child("f-data").addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    Log.d("------------ Logic","snapshots");
                     if (snapshot.exists()) {
 
 
@@ -93,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {
-                    Log.d("+++++ Error Check", error.toString());
+                    //Log.d("+++++ Error Check", error.toString());
                 }
 
             });

@@ -64,6 +64,7 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
     private static final String CHANNEL_ID = "MyNotificationChannel";
     private static final String CHANNEL_NAME = "My Notification Channel";
     private static final String CHANNEL_DESC = "Channel for my daily notifications";
+    String today;
 
 
     @Override
@@ -76,7 +77,6 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 
         toolbar = findViewById(R.id.dashboard_toolbar);
         setSupportActionBar(toolbar);
-        Log.d("Activity Check", "-----  In dashboard Activity");
 
 
         drawerLayout = findViewById(R.id.dashboard_drawer_layout);
@@ -104,7 +104,10 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 
         auth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
-        databaseReference = database.getReference("Attendance").child(auth.getUid()).child(new SimpleDateFormat("dd-MM-yyyy").format(Calendar.getInstance().getTime())).child("status");
+
+        SimpleDateFormat simpleDateFormat= new SimpleDateFormat("dd-MM-yyyy");
+        today=simpleDateFormat.format(Calendar.getInstance().getTime());
+        databaseReference = database.getReference("Attendance").child(auth.getUid()).child(today);
 
         today_text= findViewById(R.id.dashboard_text_date);
         attendance_status= findViewById(R.id.dashboard_text_attendance_status);
@@ -117,7 +120,7 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 
 
 
-        today_text.setText(new SimpleDateFormat("E, dd MM").format(Calendar.getInstance().getTime()));
+        today_text.setText(new SimpleDateFormat("E, dd MMMM").format(Calendar.getInstance().getTime()));
 
 
         // tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
@@ -147,7 +150,7 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
         });
 
 
-        databaseReference.addValueEventListener(new ValueEventListener() {
+        databaseReference.child("status").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if(snapshot.exists()){
@@ -179,9 +182,16 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
         // check if the request code is same as what is passed  here it is 2
         if(requestCode==2)
         {
-            String message=data.getStringExtra("AUTH");
-            Toast.makeText(this,message, Toast.LENGTH_SHORT).show();
-            Log.d("From second activity",message);
+          String message=data.getStringExtra("AUTH");
+          if(message.equals("TRUE")) {
+              Toast.makeText(this, "Attendance Marked!", Toast.LENGTH_SHORT).show();
+              databaseReference.child("status").setValue("Present");
+          }
+            if(message.equals("FALSE")) {
+                Toast.makeText(this, "Face Data didn't match Please try Again !", Toast.LENGTH_SHORT).show();
+                databaseReference.child("status").setValue("Absent");
+            }
+
         }
     }
 

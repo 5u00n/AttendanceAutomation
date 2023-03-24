@@ -34,7 +34,7 @@ public class AuthActivity extends AppCompatActivity {
 
 
     Intent intent;
-    String email,pass;
+    String email, pass;
 
 
     FirebaseDatabase database;
@@ -47,24 +47,24 @@ public class AuthActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_auth);
 
-        auth= FirebaseAuth.getInstance();
-        database= FirebaseDatabase.getInstance();
-        reference=database.getReference();
+        auth = FirebaseAuth.getInstance();
+        database = FirebaseDatabase.getInstance();
+        reference = database.getReference();
 
-        intent= getIntent();
-        email= intent.getStringExtra("emailID");
+        intent = getIntent();
+        email = intent.getStringExtra("emailID");
 
-        password= findViewById(R.id.auth_password);
-        loginButton= findViewById(R.id.auth_button_login);
+        password = findViewById(R.id.auth_password);
+        loginButton = findViewById(R.id.auth_button_login);
 
 
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                if(password.getText().toString().isEmpty() ){
+                if (password.getText().toString().isEmpty()) {
                     Toast.makeText(AuthActivity.this, "Please Enter Password", Toast.LENGTH_SHORT).show();
-                }else {
+                } else {
                     validateAndLogin(email, password.getText().toString());
                 }
             }
@@ -73,7 +73,7 @@ public class AuthActivity extends AppCompatActivity {
 
     private void validateAndLogin(String email, String pass) {
 
-        auth.signInWithEmailAndPassword(email,pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+        auth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
@@ -99,11 +99,11 @@ public class AuthActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                if(snapshot.exists()){
+                if (snapshot.exists()) {
                     startActivity(new Intent(AuthActivity.this, DashboardActivity.class));
                     finish();
-                }else {
-                    startActivity(new Intent(AuthActivity.this,AddFaceDataActivity.class));
+                } else {
+                    startActivity(new Intent(AuthActivity.this, AddFaceDataActivity.class));
                     finish();
                 }
             }

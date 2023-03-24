@@ -42,7 +42,6 @@ public class LoginActivity extends AppCompatActivity {
 
 
 
-        Log.d("Activity Check","-----  In Login Activity");
 
         database = FirebaseDatabase.getInstance();
         reference = database.getReference("EmployeeID");
@@ -99,11 +98,9 @@ public class LoginActivity extends AppCompatActivity {
                                     boolean isNewUser = task.getResult().getSignInMethods().isEmpty();
 
                                     if (isNewUser) {
-                                        Log.e("TAG", "Is New User!");
                                         startActivity(new Intent(LoginActivity.this, AddAuthActivity.class).putExtra("emailID", emailS));
                                         finish();
                                     } else {
-                                        Log.e("TAG", "Is Old User!");
                                         startActivity(new Intent(LoginActivity.this, AuthActivity.class).putExtra("emailID", emailS));
                                         finish();
                                     }

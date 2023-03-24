@@ -1,5 +1,12 @@
 package com.projectopel.attendanceautomation.Login;
 
+import static com.projectopel.attendanceautomation.FaceRecognisitionHelper.CollectionHelper.getBitmapFromUri;
+import static com.projectopel.attendanceautomation.FaceRecognisitionHelper.CollectionHelper.getCropBitmapByCPU;
+import static com.projectopel.attendanceautomation.FaceRecognisitionHelper.CollectionHelper.getResizedBitmap;
+import static com.projectopel.attendanceautomation.FaceRecognisitionHelper.CollectionHelper.loadModelFile;
+import static com.projectopel.attendanceautomation.FaceRecognisitionHelper.CollectionHelper.rotateBitmap;
+import static com.projectopel.attendanceautomation.FaceRecognisitionHelper.CollectionHelper.toBitmap;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -23,6 +30,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
+import android.util.Log;
 import android.util.Pair;
 import android.util.Size;
 import android.view.View;
@@ -120,6 +128,7 @@ public class AddFaceDataActivity extends AppCompatActivity {
     DatabaseReference dbRef;
     String push_id;
 
+
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -153,12 +162,12 @@ public class AddFaceDataActivity extends AppCompatActivity {
         }
 
 
-
         recognize.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (recognize.getText().toString().equals("Goto Dashboard")) {
                     start = true;
+                    Toast.makeText(context, "COMPLETED", Toast.LENGTH_SHORT).show();
                     Intent i = new Intent(context, DashboardActivity.class);
                     startActivity(i);
                     finish();
@@ -166,8 +175,8 @@ public class AddFaceDataActivity extends AppCompatActivity {
 
                     recognize.setText("ADD FACE " + add_cnt++);
                     cpb.setProgress((float) add_cnt * 20);
-                    addFaceAndUpload();
-                    if(add_cnt>4) {
+                    //addFaceAndUpload();
+                    if (add_cnt > 4) {
                         recognize.setText("Goto Dashboard");
                     }
 
@@ -196,9 +205,9 @@ public class AddFaceDataActivity extends AppCompatActivity {
     private void addFaceAndUpload() {
         SimilarityClassifier.Recognition result = new SimilarityClassifier.Recognition("0", "", -1f);
         result.setExtra(embeedings);
-        registered.put(name, result);
+        registered.put(mAuth.getUid(), result);
         String jsonString = new Gson().toJson(registered);
-        // Log.d("suren",jsonString);
+        Log.d("suren", jsonString);
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference databaseReference = firebaseDatabase.getReference("users").child(mAuth.getUid());
         databaseReference.child("f-data").setValue(jsonString);
@@ -218,14 +227,6 @@ public class AddFaceDataActivity extends AppCompatActivity {
         }
     }
 
-    private MappedByteBuffer loadModelFile(Activity activity, String MODEL_FILE) throws IOException {
-        AssetFileDescriptor fileDescriptor = activity.getAssets().openFd(MODEL_FILE);
-        FileInputStream inputStream = new FileInputStream(fileDescriptor.getFileDescriptor());
-        FileChannel fileChannel = inputStream.getChannel();
-        long startOffset = fileDescriptor.getStartOffset();
-        long declaredLength = fileDescriptor.getDeclaredLength();
-        return fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength);
-    }
 
     //Bind camera and preview view
     private void cameraBind() {
@@ -246,19 +247,13 @@ public class AddFaceDataActivity extends AppCompatActivity {
 
 
     void bindPreview(@NonNull ProcessCameraProvider cameraProvider) {
-        Preview preview = new Preview.Builder()
-                .build();
+        Preview preview = new Preview.Builder().build();
 
-        cameraSelector = new CameraSelector.Builder()
-                .requireLensFacing(cam_face)
-                .build();
+        cameraSelector = new CameraSelector.Builder().requireLensFacing(cam_face).build();
 
         preview.setSurfaceProvider(previewView.getSurfaceProvider());
-        ImageAnalysis imageAnalysis =
-                new ImageAnalysis.Builder()
-                        .setTargetResolution(new Size(640, 480))
-                        .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST) //Latest frame is shown
-                        .build();
+        ImageAnalysis imageAnalysis = new ImageAnalysis.Builder().setTargetResolution(new Size(640, 480)).setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST) //Latest frame is shown
+                .build();
 
         Executor executor = Executors.newSingleThreadExecutor();
         imageAnalysis.setAnalyzer(executor, new ImageAnalysis.Analyzer() {
@@ -279,7 +274,6 @@ public class AddFaceDataActivity extends AppCompatActivity {
 
                 if (mediaImage != null) {
                     image = InputImage.fromMediaImage(mediaImage, imageProxy.getImageInfo().getRotationDegrees());
-//                    System.out.println("Rotation "+imageProxy.getImageInfo().getRotationDegrees());
                 }
 
                 Task<List<Face>> result =
@@ -357,11 +351,6 @@ public class AddFaceDataActivity extends AppCompatActivity {
 
     public void recognizeImage(final Bitmap bitmap) {
 
-        // set Face to Preview
-        //face_preview.setImageBitmap(bitmap);
-
-        //Create ByteBuffer to store normalized image
-
         ByteBuffer imgData = ByteBuffer.allocateDirect(1 * inputSize * inputSize * 3 * 4);
 
         imgData.order(ByteOrder.nativeOrder());
@@ -416,34 +405,12 @@ public class AddFaceDataActivity extends AppCompatActivity {
                 final String name = nearest.get(0).first; //get name and distance of closest matching face
                 // label = name;
                 distance_local = nearest.get(0).second;
-               /* if (developerMode) {
-                  //  if (distance_local < distance) //If distance between Closest found face is more than 1.000 ,then output UNKNOWN face.
-                    //    reco_name.setText("Nearest: " + name + "\nDist: " + String.format("%.3f", distance_local) + "\n2nd Nearest: " + nearest.get(1).first + "\nDist: " + String.format("%.3f", nearest.get(1).second));
-                    //else
-                      //  reco_name.setText("Unknown " + "\nDist: " + String.format("%.3f", distance_local) + "\nNearest: " + name + "\nDist: " + String.format("%.3f", distance_local) + "\n2nd Nearest: " + nearest.get(1).first + "\nDist: " + String.format("%.3f", nearest.get(1).second));
 
-//
-                } else {
-                    if (distance_local < distance) //If distance between Closest found face is more than 1.000 ,then output UNKNOWN face.
-                     //   reco_name.setText(name);
-                    else
-                      //  reco_name.setText("Unknown");
-//                    System.out.println("nearest: " + name + " - distance: " + distance_local);
-                }*/
 
 
             }
         }
 
-
-//            final int numDetectionsOutput = 1;
-//            final ArrayList<SimilarityClassifier.Recognition> recognitions = new ArrayList<>(numDetectionsOutput);
-//            SimilarityClassifier.Recognition rec = new SimilarityClassifier.Recognition(
-//                    id,
-//                    label,
-//                    distance);
-//
-//            recognitions.add( rec );
 
     }
 
@@ -477,187 +444,26 @@ public class AddFaceDataActivity extends AppCompatActivity {
     }
 
 
-    public Bitmap getResizedBitmap(Bitmap bm, int newWidth, int newHeight) {
-        int width = bm.getWidth();
-        int height = bm.getHeight();
-        float scaleWidth = ((float) newWidth) / width;
-        float scaleHeight = ((float) newHeight) / height;
-        // CREATE A MATRIX FOR THE MANIPULATION
-        Matrix matrix = new Matrix();
-        // RESIZE THE BIT MAP
-        matrix.postScale(scaleWidth, scaleHeight);
-
-        // "RECREATE" THE NEW BITMAP
-        Bitmap resizedBitmap = Bitmap.createBitmap(
-                bm, 0, 0, width, height, matrix, false);
-        bm.recycle();
-        return resizedBitmap;
-    }
-
-
-    private static Bitmap getCropBitmapByCPU(Bitmap source, RectF cropRectF) {
-        Bitmap resultBitmap = Bitmap.createBitmap((int) cropRectF.width(),
-                (int) cropRectF.height(), Bitmap.Config.ARGB_8888);
-        Canvas cavas = new Canvas(resultBitmap);
-
-        // draw background
-        Paint paint = new Paint(Paint.FILTER_BITMAP_FLAG);
-        paint.setColor(Color.WHITE);
-        cavas.drawRect(
-                new RectF(0, 0, cropRectF.width(), cropRectF.height()),
-                paint);
-
-        Matrix matrix = new Matrix();
-        matrix.postTranslate(-cropRectF.left, -cropRectF.top);
-
-        cavas.drawBitmap(source, matrix, paint);
-
-        if (source != null && !source.isRecycled()) {
-            source.recycle();
-        }
-        return resultBitmap;
-    }
-
-
-    private static Bitmap rotateBitmap(
-            Bitmap bitmap, int rotationDegrees, boolean flipX, boolean flipY) {
-        Matrix matrix = new Matrix();
-
-        // Rotate the image back to straight.
-        matrix.postRotate(rotationDegrees);
-
-        // Mirror the image along the X or Y axis.
-        matrix.postScale(flipX ? -1.0f : 1.0f, flipY ? -1.0f : 1.0f);
-        Bitmap rotatedBitmap =
-                Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-
-        // Recycle the old bitmap if it has changed.
-        if (rotatedBitmap != bitmap) {
-            bitmap.recycle();
-        }
-        return rotatedBitmap;
-    }
-
-
-    //IMPORTANT. If conversion not done ,the toBitmap conversion does not work on some devices.
-    private static byte[] YUV_420_888toNV21(Image image) {
-
-        int width = image.getWidth();
-        int height = image.getHeight();
-        int ySize = width * height;
-        int uvSize = width * height / 4;
-
-        byte[] nv21 = new byte[ySize + uvSize * 2];
-
-        ByteBuffer yBuffer = image.getPlanes()[0].getBuffer(); // Y
-        ByteBuffer uBuffer = image.getPlanes()[1].getBuffer(); // U
-        ByteBuffer vBuffer = image.getPlanes()[2].getBuffer(); // V
-
-        int rowStride = image.getPlanes()[0].getRowStride();
-        assert (image.getPlanes()[0].getPixelStride() == 1);
-
-        int pos = 0;
-
-        if (rowStride == width) { // likely
-            yBuffer.get(nv21, 0, ySize);
-            pos += ySize;
-        } else {
-            long yBufferPos = -rowStride; // not an actual position
-            for (; pos < ySize; pos += width) {
-                yBufferPos += rowStride;
-                yBuffer.position((int) yBufferPos);
-                yBuffer.get(nv21, pos, width);
-            }
-        }
-
-        rowStride = image.getPlanes()[2].getRowStride();
-        int pixelStride = image.getPlanes()[2].getPixelStride();
-
-        assert (rowStride == image.getPlanes()[1].getRowStride());
-        assert (pixelStride == image.getPlanes()[1].getPixelStride());
-
-        if (pixelStride == 2 && rowStride == width && uBuffer.get(0) == vBuffer.get(1)) {
-            // maybe V an U planes overlap as per NV21, which means vBuffer[1] is alias of uBuffer[0]
-            byte savePixel = vBuffer.get(1);
-            try {
-                vBuffer.put(1, (byte) ~savePixel);
-                if (uBuffer.get(0) == (byte) ~savePixel) {
-                    vBuffer.put(1, savePixel);
-                    vBuffer.position(0);
-                    uBuffer.position(0);
-                    vBuffer.get(nv21, ySize, 1);
-                    uBuffer.get(nv21, ySize + 1, uBuffer.remaining());
-
-                    return nv21; // shortcut
-                }
-            } catch (ReadOnlyBufferException ex) {
-                // unfortunately, we cannot check if vBuffer and uBuffer overlap
-            }
-
-            // unfortunately, the check failed. We must save U and V pixel by pixel
-            vBuffer.put(1, savePixel);
-        }
-
-        // other optimizations could check if (pixelStride == 1) or (pixelStride == 2),
-        // but performance gain would be less significant
-
-        for (int row = 0; row < height / 2; row++) {
-            for (int col = 0; col < width / 2; col++) {
-                int vuPos = col * pixelStride + row * rowStride;
-                nv21[pos++] = vBuffer.get(vuPos);
-                nv21[pos++] = uBuffer.get(vuPos);
-            }
-        }
-
-        return nv21;
-    }
-
-
-    private Bitmap toBitmap(Image image) {
-
-        byte[] nv21 = YUV_420_888toNV21(image);
-
-
-        YuvImage yuvImage = new YuvImage(nv21, ImageFormat.NV21, image.getWidth(), image.getHeight(), null);
-
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        yuvImage.compressToJpeg(new Rect(0, 0, yuvImage.getWidth(), yuvImage.getHeight()), 75, out);
-
-        byte[] imageBytes = out.toByteArray();
-        //System.out.println("bytes"+ Arrays.toString(imageBytes));
-
-        //System.out.println("FORMAT"+image.getFormat());
-
-        return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
-    }
-
-    //Similar Analyzing Procedure
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             if (requestCode == SELECT_PICTURE) {
                 Uri selectedImageUri = data.getData();
                 try {
-                    InputImage impphoto = InputImage.fromBitmap(getBitmapFromUri(selectedImageUri), 0);
+                    InputImage impphoto = InputImage.fromBitmap(getBitmapFromUri(selectedImageUri, context), 0);
                     detector.process(impphoto).addOnSuccessListener(new OnSuccessListener<List<Face>>() {
                         @Override
                         public void onSuccess(List<Face> faces) {
 
                             if (faces.size() != 0) {
                                 recognize.setText("Recognize");
-                                //add_face.setVisibility(View.VISIBLE);
-                                // reco_name.setVisibility(View.INVISIBLE);
-                                //face_preview.setVisibility(View.VISIBLE);
-                                // preview_info.setText("1.Bring Face in view of Camera.\n\n2.Your Face preview will appear here.\n\n3.Click Add button to save face.");
                                 Face face = faces.get(0);
-//                                System.out.println(face);
+                                //System.out.println(face);
 
-                                //write code to recreate bitmap from source
-                                //Write code to show bitmap to canvas
 
                                 Bitmap frame_bmp = null;
                                 try {
-                                    frame_bmp = getBitmapFromUri(selectedImageUri);
+                                    frame_bmp = getBitmapFromUri(selectedImageUri, context);
                                 } catch (IOException e) {
                                     e.printStackTrace();
                                 }
@@ -701,14 +507,6 @@ public class AddFaceDataActivity extends AppCompatActivity {
         }
     }
 
-    private Bitmap getBitmapFromUri(Uri uri) throws IOException {
-        ParcelFileDescriptor parcelFileDescriptor =
-                getContentResolver().openFileDescriptor(uri, "r");
-        FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
-        Bitmap image = BitmapFactory.decodeFileDescriptor(fileDescriptor);
-        parcelFileDescriptor.close();
-        return image;
-    }
 
 }
 
