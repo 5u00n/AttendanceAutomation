@@ -1,6 +1,8 @@
 package com.projectopel.attendanceautomation.UI.Dashboard.Week;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,10 +39,20 @@ Context context;
     @Override
     public void onBindViewHolder(@NonNull viewHolder holder, int position) {
         WeeklyReportModel model = list.get(position);
-        holder.imageView.setImageResource(R.drawable.rectanglegreen);
+
+        Log.d("Status from Weekly  ",model.getstatus());
+        if(model.getstatus().equals("present")){
+            holder.imageView.setBackgroundColor(Color.GREEN);
+        }
+        else if(model.getstatus().equals("absent")){
+            holder.imageView.setBackgroundColor(Color.RED);
+        }else{
+            holder.imageView.setBackgroundColor(Color.GRAY);
+        }
+
         holder.day.setText(model.getDay());
         holder.intime.setText(model.getIntime());
-        holder.outtime.setText(model.outtime);
+        holder.outtime.setText(model.getOuttime());
 
     }
 
@@ -55,9 +67,10 @@ Context context;
         public viewHolder(@NonNull View itemView) {
             super(itemView);
             imageView = itemView.findViewById(R.id.presentybox);
+            imageView.setAlpha(12);
             day = itemView.findViewById(R.id.weekly_report_day);
             intime = itemView.findViewById(R.id.weekly_report_intime);
-            outtime =intime.findViewById(R.id.weekly_report_outtime);
+            outtime =itemView.findViewById(R.id.weekly_report_outtime);
         }
     }
 

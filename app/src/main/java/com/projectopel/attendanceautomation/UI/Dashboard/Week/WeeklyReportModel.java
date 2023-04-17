@@ -1,21 +1,21 @@
 package com.projectopel.attendanceautomation.UI.Dashboard.Week;
 
 public class WeeklyReportModel {
-    String img ,day, intime, outtime;
+    String status ,day, intime, outtime;
 
-    public WeeklyReportModel(String img, String day, String intime, String outtime) {
-        this.img = img;
+    public WeeklyReportModel(String status, String day, String intime, String outtime) {
+        this.status = status;
         this.day = day;
         this.intime = intime;
         this.outtime = outtime;
     }
 
-    public String getImg() {
-        return img;
+    public String getstatus() {
+        return status;
     }
 
-    public void setImg(String img) {
-        this.img = img;
+    public void setstatus(String status) {
+        this.status = status;
     }
 
     public String getDay() {
