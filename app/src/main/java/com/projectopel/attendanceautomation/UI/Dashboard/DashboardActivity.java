@@ -105,7 +105,7 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
         auth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
 
-        SimpleDateFormat simpleDateFormat= new SimpleDateFormat("dd-MM-yyyy");
+        SimpleDateFormat simpleDateFormat= new SimpleDateFormat("yyyy-MM-dd");
         today=simpleDateFormat.format(Calendar.getInstance().getTime());
         databaseReference = database.getReference("Attendance").child(auth.getUid()).child(today);
 

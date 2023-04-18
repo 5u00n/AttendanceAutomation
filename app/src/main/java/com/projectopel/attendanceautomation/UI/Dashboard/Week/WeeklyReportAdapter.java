@@ -40,11 +40,11 @@ Context context;
     public void onBindViewHolder(@NonNull viewHolder holder, int position) {
         WeeklyReportModel model = list.get(position);
 
-        Log.d("Status from Weekly  ",model.getstatus());
-        if(model.getstatus().equals("present")){
+        //Log.d("Status from Weekly  Adapter",model.getstatus());
+        if(model.getstatus().equals("Present")){
             holder.imageView.setBackgroundColor(Color.GREEN);
         }
-        else if(model.getstatus().equals("absent")){
+        else if(model.getstatus().equals("Absent")){
             holder.imageView.setBackgroundColor(Color.RED);
         }else{
             holder.imageView.setBackgroundColor(Color.GRAY);

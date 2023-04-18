@@ -17,16 +17,19 @@
         android:layout_height="match_parent"
         android:padding="8dp"
         android:orientation="horizontal">
-            <androidx.cardview.widget.CardView
-            android:layout_width="70dp"
-            android:layout_height="match_parent">
+            <com.google.android.material.card.MaterialCardView
+                app:cardCornerRadius="10dp"
+                android:layout_width="70dp"
+                android:elevation="7dp"
+                android:alpha="27"
+                android:layout_height="match_parent">
             <ImageView
-                android:alpha="127"
+                android:alpha="27"
                 android:layout_weight="0.1"
                 android:id="@+id/presentybox"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
 
             <LinearLayout
             android:layout_width="match_parent"

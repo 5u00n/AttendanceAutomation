@@ -18,6 +18,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.SimpleExpandableListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -56,7 +57,7 @@ public class AddLeaveActivity extends AppCompatActivity {
     StorageReference stor_ref;
 
     private static int PICK_IMAGE = 123;
-    SimpleDateFormat sdf = new SimpleDateFormat("dd/M/yyyy");
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-M-dd");
     Uri imageUri = null;
 
     @Override
@@ -135,13 +136,15 @@ public class AddLeaveActivity extends AppCompatActivity {
         alertDialogBuilder.setCancelable(false).setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
 
-                String dt =datePicker.getDayOfMonth() + "/" + (datePicker.getMonth()+1)+ "/" + datePicker.getYear();
+                String dt = datePicker.getYear()+ "-" + (datePicker.getMonth()+1)+ "-" +datePicker.getDayOfMonth() ;
 
                 //datePicker.get
 
+                SimpleDateFormat sdfUni= new SimpleDateFormat("yyyy-MM-dd");
+
                 String date = null;
                 try {
-                    date = sdf.format(sdf.parse(dt));
+                    date = sdfUni.format(sdf.parse(dt));
                 } catch (ParseException e) {
                     throw new RuntimeException(e);
                 }
@@ -334,7 +337,7 @@ public class AddLeaveActivity extends AppCompatActivity {
     public void sendToRealtimeDatabase(RequestsModel rs) {
 
         data_ref.child("users").child(auth.getUid()).child("requests").child(rs.getId()).setValue(rs);
-        data_ref.child("requests").child(rs.getId()).setValue(rs);
+        data_ref.child("requests").child(auth.getUid()).child(rs.getId()).setValue(rs);
 
         imageUri = null;
         finish();
