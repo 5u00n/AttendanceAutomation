@@ -90,7 +90,15 @@ public class WeeklyReportFragment extends Fragment {
                 ArrayList<WeeklyReportModel> weekListTemp = new ArrayList<>();
                 for (DataSnapshot ds : snapshot.getChildren()) {
                     try {
-                        weekListTemp.add(new WeeklyReportModel(ds.child("status").getValue().toString(), sdfDay.format(sdfUni.parse(ds.getKey())), "--", "--"));
+
+                        String init_InTime="--:--",final_OutTime="--:--";
+                        if(ds.child("in_time").exists()){
+                            init_InTime= ds.child("in_time").getValue().toString();
+                        }
+                        if(ds.child("out_time").exists()){
+                            final_OutTime= ds.child("out_time").getValue().toString();
+                        }
+                        weekListTemp.add(new WeeklyReportModel(ds.child("status").getValue().toString(), sdfDay.format(sdfUni.parse(ds.getKey())), init_InTime, final_OutTime));
                     } catch (ParseException e) {
                         throw new RuntimeException(e);
                     }
